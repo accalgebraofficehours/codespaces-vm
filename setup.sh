@@ -1,12 +1,19 @@
-sudo apt update
-sudo apt install openbox thunar tigervnc-standalone-server konsole alien xfce4 xfce4-session xfce4-terminal xfce4-panel xfdesktop4 thunar x11vnc xvfb dbus-x11 -y
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-sudo apt install ./google-chrome*.deb -y
-sudo rm google-chrome-stable_current_amd64.deb
-sudo chmod +x start.sh
-git clone https://github.com/novnc/noVNC
-clear
+#!/bin/bash
+
+
+sudo pacman -Syu --noconfirm
+sudo pacman -S --noconfirm xfce4 xfce4-goodies tigervnc chromium xorg-server-xvfb dbus xterm git
+
+
+
+if [ ! -d "noVNC" ]; then
+    git clone https://github.com/novnc/noVNC
+fi
+
+chmod +x start.sh
+chmod +x kill.sh
+
 echo
 echo
-echo ✅ Setup Complete! Start by running start.sh
 echo
+echo -e "\n\n✅ Arch Linux Setup Complete! Start by running ./start.sh"
