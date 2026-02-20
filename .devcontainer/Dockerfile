@@ -1,10 +1,10 @@
 # Use official Arch Linux image
 FROM archlinux:latest
 
-# Install XFCE, VNC, and vital DBUS/X11 dependencies
+# Install XFCE, VNC, and vital dependencies (Removed 'novnc')
 RUN pacman -Syu --noconfirm \
     base-devel git xfce4 xfce4-goodies \
-    tigervnc novnc python-numpy xorg-server-xvfb \
+    tigervnc python-numpy xorg-server-xvfb \
     dbus xorg-server
 
 # Create the user and give sudo permissions
