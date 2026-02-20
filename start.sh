@@ -20,7 +20,11 @@ sudo chmod 600 ~/.vnc/passwd
 # Note: Arch TigerVNC uses '-xstartup' differently, 
 # so we point it directly to your file.
 vncserver :1 -SecurityTypes VncAuth -geometry 1280x800 -depth 24 \
-    -xstartup "$WORKSPACE_DIR/utils/xfce-xstartup" -rfbport 5900
+  -xstartup "$WORKSPACE_DIR/utils/xfce-xstartup" \
+  -rfbport 5900 >> "$LOGFILE" 2>&1 || {
+    echo "VNC FAILED — check log" | tee -a "$LOGFILE"
+    exit 1
+}
 sleep 2
 
 # 6. Start noVNC proxy
