@@ -22,4 +22,4 @@ echo
 echo
 echo -e "\n\n✅ Arch Linux Setup Complete! Autostarting right now and restart by running ./start.sh"
 echo
-./start.sh
+sudo ./start.sh
