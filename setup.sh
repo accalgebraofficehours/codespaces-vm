@@ -12,7 +12,7 @@ fi
 
 chmod +x start.sh
 echo "Made start executable"
-chmod +x kill.sh
+chmod +x "$WORKSPACE_DIR/utils/xfce-xstartup"
 echo "Made kill executable"
 
 
