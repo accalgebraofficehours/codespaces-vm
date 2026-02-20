@@ -27,3 +27,4 @@ sleep 2
 # Assuming you cloned noVNC into your root folder in setup.sh
 cd "$WORKSPACE_DIR/noVNC" || exit
 ./utils/novnc_proxy --vnc 127.0.0.1:5900 --listen 0.0.0.0:6080
+echo "VNC started. Go to ports tab and click on the globe on 6080"
