@@ -1,20 +1,29 @@
 #!/bin/bash
-# Make sure xfce-xstartup is executable
-chmod +x /workspaces/codespaces-vm/utils/xfce-xstartup
 
-# Kill previous VNC session
+# 1. Update paths - Arch typically uses the absolute path to your workspace
+WORKSPACE_DIR="/workspaces/$(basename $(pwd))"
+
+# 2. Make sure your startup script is executable
+chmod +x "$WORKSPACE_DIR/utils/xfce-xstartup"
+
+# 3. Kill previous VNC session
+# Arch's TigerVNC is strict; we clean up the lock files too
 vncserver -kill :1 2>/dev/null || true
+sudo rm -f /tmp/.X1-lock /tmp/.X11-unix/X1
 
-# Set VNC password (change 'YOUR_PASSWORD_HERE' to your desired password)
+# 4. Set VNC password
 mkdir -p ~/.vnc
-echo "YOUR_PASSWORD_HERE" | vncpasswd -f > ~/.vnc/passwd
+echo "password" | vncpasswd -f > ~/.vnc/passwd
 chmod 600 ~/.vnc/passwd
 
-# Start VNC server with password authentication
+# 5. Start VNC server
+# Note: Arch TigerVNC uses '-xstartup' differently, 
+# so we point it directly to your file.
 vncserver :1 -SecurityTypes VncAuth -geometry 1280x800 -depth 24 \
-    -xstartup /workspaces/codespaces-vm/utils/xfce-xstartup -rfbport 5900
-sleep 1
+    -xstartup "$WORKSPACE_DIR/utils/xfce-xstartup" -rfbport 5900
+sleep 2
 
-# Start noVNC proxy
-cd /workspaces/codespaces-vm/noVNC || exit
-./utils/novnc_proxy --vnc 127.0.0.1:5900 --listen 0.0.0.0:6080 &
+# 6. Start noVNC proxy
+# Assuming you cloned noVNC into your root folder in setup.sh
+cd "$WORKSPACE_DIR/noVNC" || exit
+./utils/novnc_proxy --vnc 127.0.0.1:5900 --listen 0.0.0.0:6080
