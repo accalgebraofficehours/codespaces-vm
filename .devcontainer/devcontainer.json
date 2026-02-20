@@ -1,0 +1,12 @@
+{
+  "name": "Arch Linux Desktop",
+  "build": { "dockerfile": "Dockerfile" },
+  "forwardPorts": [6080],
+  "portsAttributes": {
+    "6080": {
+      "label": "noVNC Desktop",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "remoteUser": "archuser"
+}
