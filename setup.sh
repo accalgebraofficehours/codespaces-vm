@@ -14,8 +14,7 @@ chmod +x start.sh
 echo "Made start executable"
 chmod +x kill.sh
 echo "Made kill executable"
-chmod +x utils/xfce-xstartup
-echo "Made xfce-xstartup executable"
+
 
 echo
 echo
