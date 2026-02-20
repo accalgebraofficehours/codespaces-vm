@@ -3,10 +3,10 @@ unset SESSION_MANAGER
 unset DBUS_SESSION_BUS_ADDRESS
 export DISPLAY=:1
 
-# Start DBus session
-if [ -x /usr/bin/dbus-launch ]; then
+# Arch-specific DBus check
+if command -v dbus-launch >/dev/null; then
     eval "$(dbus-launch --sh-syntax --exit-with-session)"
 fi
 
-# Start XFCE in the **foreground** (no &)
+# Ensure the session starts correctly on Arch
 exec startxfce4
