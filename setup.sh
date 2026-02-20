@@ -8,12 +8,12 @@ sudo pacman -S --noconfirm python-websockify
 
 
 if [ ! -d "noVNC" ]; then
-    git clone https://github.com/novnc/noVNC
+    sudo git clone https://github.com/novnc/noVNC
 fi
 
-chmod +x start.sh
+sudo chmod +x start.sh
 echo "Made start executable"
-chmod +x "$WORKSPACE_DIR/utils/xfce-xstartup"
+sudo chmod +x ./utils/kill.sh
 echo "Made kill executable"
 
 
