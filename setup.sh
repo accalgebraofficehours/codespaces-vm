@@ -11,9 +11,15 @@ if [ ! -d "noVNC" ]; then
 fi
 
 chmod +x start.sh
+echo "Made start executable"
 chmod +x kill.sh
+echo "Made kill executable"
+chmod +x utils/xfce-xstartup
+echo "Made xfce-xstartup executable"
 
 echo
 echo
 echo
-echo -e "\n\n✅ Arch Linux Setup Complete! Start by running ./start.sh"
+echo -e "\n\n✅ Arch Linux Setup Complete! Autostarting right now and restart by running ./start.sh"
+echo
+./start.sh
