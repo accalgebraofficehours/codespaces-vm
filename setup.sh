@@ -20,6 +20,6 @@ echo "Made start executable"
 echo
 echo
 echo
-echo -e "\n\n✅ Arch Linux Setup Complete! Autostarting right now and restart by running ./start.sh"
+echo -e "\n\n✅ Arch Linux Setup Complete! Setup by following ts document: https://bit.ly/vnc-setup"
 echo
-./start.sh
+
