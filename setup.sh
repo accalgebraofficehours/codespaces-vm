@@ -8,13 +8,13 @@ sudo pacman -S --noconfirm python-websockify
 
 
 if [ ! -d "noVNC" ]; then
-    sudo git clone https://github.com/novnc/noVNC
+    git clone https://github.com/novnc/noVNC
 fi
 
-sudo chmod +x start.sh
-echo "Made start executable"
 sudo chmod +x ./utils/kill.sh
 echo "Made kill executable"
+sudo chmod +x start.sh
+echo "Made start executable"
 
 
 echo
@@ -22,4 +22,4 @@ echo
 echo
 echo -e "\n\n✅ Arch Linux Setup Complete! Autostarting right now and restart by running ./start.sh"
 echo
-sudo ./start.sh
+./start.sh
