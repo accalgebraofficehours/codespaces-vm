@@ -9,17 +9,17 @@ echo "PWD is: $(pwd)"
 echo "WORKSPACE_DIR is: $(pwd)"
 
 # 2. Make sure your startup script is executable
-sudo chmod +x "$(pwd)/utils/xfce-xstartup"
+chmod +x "$(pwd)/utils/xfce-xstartup"
 
 # 3. Kill previous VNC session
 # Arch's TigerVNC is strict; we clean up the lock files too
 vncserver -kill :1 2>/dev/null || true
-sudo rm -f /tmp/.X1-lock /tmp/.X11-unix/X1
+rm -f /tmp/.X1-lock /tmp/.X11-unix/X1
 
 # 4. Set VNC password
 mkdir -p ~/.vnc
 echo "password" | vncpasswd -f > ~/.vnc/passwd
-sudo chmod 600 ~/.vnc/passwd
+chmod 600 ~/.vnc/passwd
 
 # 5. Start VNC server
 # Note: Arch TigerVNC uses '-xstartup' differently, 
