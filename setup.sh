@@ -1,23 +1,17 @@
 #!/bin/bash
-
+# =====================================
+# setup.sh — One-time Arch Codespaces VNC setup
+# =====================================
 set -e
-set -x  # show commands for debugging
+set -x  # show commands as they run
 
-sudo pacman -Syu --noconfirm
-sudo pacman -S --noconfirm xfce4 xfce4-goodies tigervnc chromium xorg-server-xvfb dbus xterm git
-pip install --user websockify
-
-
-if [ ! -d "noVNC" ]; then
-    git clone https://github.com/novnc/noVNC
-fi
-
-chmod +x /utils/kill.sh
-echo "Made kill executable"
-chmod +x start.sh
-echo "Made start executable"
-
-
+# -----------------------
+# Install required packages
+# -----------------------
+sudo pacman -Sy --noconfirm python tigervnc xfce4 xfce4-goodies git
+# pipx for websockify (no system pip install required)
+sudo pacman -Sy --noconfirm python-pipx
+pipx install websockify
 
 # -----------------------
 # Create required folders
@@ -34,7 +28,18 @@ chmod +x $HOME/.config/vnc/xstartup
 # -----------------------
 # Set VNC password (interactive)
 # -----------------------
-echo "Now you will set the VNC password (required for start.sh)"
+echo "You will now set the VNC password (required for start.sh):"
 vncpasswd $HOME/.config/vnc/passwd
 
-echo "ok i think ts is complete follow bit.ly/setup-vnc for more instructions."
+# -----------------------
+# Create TigerVNC config file
+# -----------------------
+cat << EOF > $HOME/.config/vnc/config
+geometry=1280x800
+depth=24
+rfbauth=$HOME/.config/vnc/passwd
+xstartup=$HOME/.config/vnc/xstartup
+EOF
+chmod 600 $HOME/.config/vnc/config
+
+echo "✅ One-time setup complete. You can now run ./start.sh to start VNC + noVNC."
