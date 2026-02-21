@@ -1,7 +1,12 @@
 #!/bin/bash
+set -x
+
 
 # 1. Update paths - Arch typically uses the absolute path to your workspace
 WORKSPACE_DIR="/workspaces/$(basename $(pwd))"
+
+echo "PWD is: $(pwd)"
+echo "WORKSPACE_DIR is: $WORKSPACE_DIR"
 
 # 2. Make sure your startup script is executable
 sudo chmod +x "$WORKSPACE_DIR/utils/xfce-xstartup"
