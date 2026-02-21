@@ -1,6 +1,6 @@
 #!/bin/bash
 # =====================================
-# start.sh — Arch Codespaces VNC + noVNC (Shared Desktop)
+# start.sh — Arch Codespaces VNC + noVNC (Shared Desktop, password-safe)
 # =====================================
 set -e
 set -x  # show commands for debugging
@@ -13,7 +13,7 @@ LOGFILE="$REPO_DIR/novnc-start.log"
 VNC_DISPLAY=1           # always :1 for shared session
 VNC_PORT=$((5900 + VNC_DISPLAY))
 NOVNC_PORT=6080         # fixed for all clients
-XSTARTUP="$REPO_DIR/utils/xfce-xstartup"
+XSTARTUP="$HOME/.config/vnc/xstartup"
 
 # -----------------------
 # Logging helpers
@@ -36,6 +36,14 @@ rm -f "$HOME/.vnc/*.log"
 # -----------------------
 mkdir -p "$HOME/.vnc"
 chmod 700 "$HOME/.vnc"
+
+# -----------------------
+# Check password exists
+# -----------------------
+if [ ! -f "$HOME/.vnc/passwd" ]; then
+    echo "ERROR: VNC password not found. Please run 'vncpasswd' once manually before starting." | tee -a "$LOGFILE"
+    exit 1
+fi
 
 # -----------------------
 # Start VNC server
