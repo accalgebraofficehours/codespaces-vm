@@ -10,10 +10,11 @@ set -x  # show commands for debugging
 # -----------------------
 REPO_DIR="$(pwd)"
 LOGFILE="$REPO_DIR/novnc-start.log"
-VNC_DISPLAY=1           # always :1 for shared session
+VNC_DISPLAY=1               # always :1 for shared session
 VNC_PORT=$((5900 + VNC_DISPLAY))
-NOVNC_PORT=6080         # fixed for all clients
+NOVNC_PORT=6080             # fixed for all clients
 XSTARTUP="$HOME/.config/vnc/xstartup"
+VNC_PASSWORD_FILE="$HOME/.config/vnc/passwd"
 
 # -----------------------
 # Logging helpers
@@ -40,8 +41,9 @@ chmod 700 "$HOME/.vnc"
 # -----------------------
 # Check password exists
 # -----------------------
-if [ ! -f "$HOME/.vnc/passwd" ]; then
-    echo "ERROR: VNC password not found. Please run 'vncpasswd' once manually before starting." | tee -a "$LOGFILE"
+if [ ! -f "$VNC_PASSWORD_FILE" ]; then
+    echo "ERROR: VNC password not found at $VNC_PASSWORD_FILE." | tee -a "$LOGFILE"
+    echo "Please run 'vncpasswd $VNC_PASSWORD_FILE' once manually before starting." | tee -a "$LOGFILE"
     exit 1
 fi
 
@@ -49,7 +51,8 @@ fi
 # Start VNC server
 # -----------------------
 echo "Starting TigerVNC on display :$VNC_DISPLAY..." | tee -a "$LOGFILE"
-vncserver ":$VNC_DISPLAY" -geometry 1280x800 -depth 24 -xstartup "$XSTARTUP" >> "$LOGFILE" 2>&1 || {
+vncserver ":$VNC_DISPLAY" -geometry 1280x800 -depth 24 \
+    -xstartup "$XSTARTUP" -rfbauth "$VNC_PASSWORD_FILE" >> "$LOGFILE" 2>&1 || {
     echo "VNC FAILED — check log" | tee -a "$LOGFILE"
     cat "$LOGFILE"
     exit 1
