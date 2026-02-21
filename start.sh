@@ -1,38 +1,60 @@
 #!/bin/bash
+# =====================================
+# start.sh — Arch Codespaces VNC + noVNC
+# =====================================
 set -e
-set -x
+set -x  # show commands for debugging
 
+# -----------------------
+# Variables
+# -----------------------
+REPO_DIR="$(pwd)"
+LOGFILE="$REPO_DIR/novnc-start.log"
+VNC_DISPLAY=${1:-1}       # allow optional display override
+VNC_PORT=$((5900 + VNC_DISPLAY))
+NOVNC_PORT=$((6080 + VNC_DISPLAY - 1))   # 6080 for :1, 6081 for :2, etc.
+XSTARTUP="$REPO_DIR/utils/xfce-xstartup"
 
-LOGFILE="$(pwd)/novnc-start.log"
+# -----------------------
+# Logging helpers
+# -----------------------
+echo "===== Starting Arch Codespaces VNC =====" | tee "$LOGFILE"
+echo "REPO_DIR: $REPO_DIR" | tee -a "$LOGFILE"
+echo "VNC_DISPLAY: $VNC_DISPLAY" | tee -a "$LOGFILE"
+echo "VNC_PORT: $VNC_PORT" | tee -a "$LOGFILE"
+echo "NOVNC_PORT: $NOVNC_PORT" | tee -a "$LOGFILE"
 
-echo "PWD is: $(pwd)"
-echo "WORKSPACE_DIR is: $(pwd)"
+# -----------------------
+# Kill old sessions
+# -----------------------
+vncserver -kill ":$VNC_DISPLAY" || true
+pkill -f novnc_proxy || true
+rm -f "$HOME/.vnc/*.log"
 
-# 2. Make sure your startup script is executable
-chmod +x "$(pwd)/utils/xfce-xstartup"
+# -----------------------
+# Ensure VNC directories exist
+# -----------------------
+mkdir -p "$HOME/.vnc"
+chmod 700 "$HOME/.vnc"
 
-# 3. Kill previous VNC session
-# Arch's TigerVNC is strict; we clean up the lock files too
-vncserver -kill :1 2>/dev/null || true
-rm -f /tmp/.X1-lock /tmp/.X11-unix/X1
-
-# 4. Set VNC password
-mkdir -p ~/.vnc
-echo "password" | vncpasswd -f > ~/.vnc/passwd
-chmod 600 ~/.vnc/passwd
-
-# 5. Start VNC server
-# Note: Arch TigerVNC uses '-xstartup' differently, 
-# so we point it directly to your file.
-vncserver :1 -SecurityTypes VncAuth -geometry 1280x800 -depth 24 \
-  -xstartup "$(pwd)/utils/xfce-xstartup" >> "$LOGFILE" 2>&1 || {
+# -----------------------
+# Start VNC server
+# -----------------------
+echo "Starting TigerVNC on display :$VNC_DISPLAY..." | tee -a "$LOGFILE"
+vncserver ":$VNC_DISPLAY" -geometry 1280x800 -depth 24 -xstartup "$XSTARTUP" >> "$LOGFILE" 2>&1 || {
     echo "VNC FAILED — check log" | tee -a "$LOGFILE"
+    cat "$LOGFILE"
     exit 1
 }
-sleep 2
 
-# 6. Start noVNC proxy
-# Assuming you cloned noVNC into your root folder in setup.sh
-cd "$(pwd)/noVNC" || exit
-./utils/novnc_proxy --vnc 127.0.0.1:5900 --listen 0.0.0.0:6080
-echo "VNC started. Go to ports tab and click on the globe on 6080"
+# -----------------------
+# Start noVNC
+# -----------------------
+echo "Starting noVNC on port $NOVNC_PORT..." | tee -a "$LOGFILE"
+cd "$REPO_DIR/noVNC" || { echo "noVNC directory missing!" | tee -a "$LOGFILE"; exit 1; }
+
+# Start novnc_proxy pointing to the correct VNC port
+./utils/novnc_proxy --vnc 127.0.0.1:"$VNC_PORT" --listen "$NOVNC_PORT" >> "$LOGFILE" 2>&1 &
+
+echo "VNC + noVNC running. Connect via Codespaces forwarded port $NOVNC_PORT." | tee -a "$LOGFILE"
+echo "========================================" | tee -a "$LOGFILE"
