@@ -11,9 +11,9 @@ if [ ! -d "noVNC" ]; then
     git clone https://github.com/novnc/noVNC
 fi
 
-sudo chmod +x /utils/kill.sh
+chmod +x /utils/kill.sh
 echo "Made kill executable"
-sudo chmod +x start.sh
+chmod +x start.sh
 echo "Made start executable"
 
 
