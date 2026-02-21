@@ -1,6 +1,6 @@
 #!/bin/bash
 # =====================================
-# start.sh — Arch Codespaces VNC + noVNC (Shared Desktop, password-safe)
+# start.sh — Arch Codespaces shared VNC + noVNC
 # =====================================
 set -e
 set -x  # show commands for debugging
@@ -10,14 +10,12 @@ set -x  # show commands for debugging
 # -----------------------
 REPO_DIR="$(pwd)"
 LOGFILE="$REPO_DIR/novnc-start.log"
-VNC_DISPLAY=1               # always :1 for shared session
+VNC_DISPLAY=1
 VNC_PORT=$((5900 + VNC_DISPLAY))
-NOVNC_PORT=6080             # fixed for all clients
-XSTARTUP="$HOME/.config/vnc/xstartup"
-VNC_PASSWORD_FILE="$HOME/.config/vnc/passwd"
+NOVNC_PORT=6080
 
 # -----------------------
-# Logging helpers
+# Logging
 # -----------------------
 echo "===== Starting Shared Arch Codespaces VNC =====" | tee "$LOGFILE"
 echo "REPO_DIR: $REPO_DIR" | tee -a "$LOGFILE"
@@ -26,33 +24,17 @@ echo "VNC_PORT: $VNC_PORT" | tee -a "$LOGFILE"
 echo "NOVNC_PORT: $NOVNC_PORT" | tee -a "$LOGFILE"
 
 # -----------------------
-# Kill old session
+# Kill old sessions
 # -----------------------
 vncserver -kill ":$VNC_DISPLAY" || true
 pkill -f novnc_proxy || true
 rm -f "$HOME/.vnc/*.log"
 
 # -----------------------
-# Ensure VNC directories exist
-# -----------------------
-mkdir -p "$HOME/.vnc"
-chmod 700 "$HOME/.vnc"
-
-# -----------------------
-# Check password exists
-# -----------------------
-if [ ! -f "$VNC_PASSWORD_FILE" ]; then
-    echo "ERROR: VNC password not found at $VNC_PASSWORD_FILE." | tee -a "$LOGFILE"
-    echo "Please run 'vncpasswd $VNC_PASSWORD_FILE' once manually before starting." | tee -a "$LOGFILE"
-    exit 1
-fi
-
-# -----------------------
-# Start VNC server
+# Start VNC server (uses config file automatically)
 # -----------------------
 echo "Starting TigerVNC on display :$VNC_DISPLAY..." | tee -a "$LOGFILE"
-vncserver ":$VNC_DISPLAY" -geometry 1280x800 -depth 24 \
-    -xstartup "$XSTARTUP" -rfbauth "$VNC_PASSWORD_FILE" >> "$LOGFILE" 2>&1 || {
+vncserver ":$VNC_DISPLAY" >> "$LOGFILE" 2>&1 || {
     echo "VNC FAILED — check log" | tee -a "$LOGFILE"
     cat "$LOGFILE"
     exit 1
@@ -64,7 +46,7 @@ vncserver ":$VNC_DISPLAY" -geometry 1280x800 -depth 24 \
 echo "Starting noVNC on port $NOVNC_PORT..." | tee -a "$LOGFILE"
 cd "$REPO_DIR/noVNC" || { echo "noVNC directory missing!" | tee -a "$LOGFILE"; exit 1; }
 
-./utils/novnc_proxy --vnc 127.0.0.1:"$VNC_PORT" --listen "$NOVNC_PORT" >> "$LOGFILE" 2>&1 &
+# Use pipx-installed websockify
+pipx run websockify --web . "$NOVNC_PORT" 127.0.0.1:"$VNC_PORT" >> "$LOGFILE" 2>&1 &
 
-echo "Shared VNC + noVNC running. Connect via Codespaces forwarded port $NOVNC_PORT." | tee -a "$LOGFILE"
-echo "========================================" | tee -a "$LOGFILE"
+echo "✅ Shared VNC + noVNC running. Connect via Codespaces forwarded port $NOVNC_PORT." | tee -a "$LOGFILE"
