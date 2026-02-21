@@ -5,8 +5,7 @@ set -x  # show commands for debugging
 
 sudo pacman -Syu --noconfirm
 sudo pacman -S --noconfirm xfce4 xfce4-goodies tigervnc chromium xorg-server-xvfb dbus xterm git
-sudo pacman -S --noconfirm python-websockify
-
+pip install --user websockify
 
 
 if [ ! -d "noVNC" ]; then
