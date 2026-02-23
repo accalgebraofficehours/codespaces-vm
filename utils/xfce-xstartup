@@ -1,12 +1,5 @@
-#!/bin/sh
-unset SESSION_MANAGER
-unset DBUS_SESSION_BUS_ADDRESS
-export DISPLAY=:1
-
-# Arch-specific DBus check
-if command -v dbus-launch >/dev/null; then
-    eval "$(dbus-launch --sh-syntax --exit-with-session)"
-fi
-
-# Ensure the session starts correctly on Arch
-exec startxfce4
+#!/bin/bash
+export XDG_SESSION_TYPE=x11
+export XDG_RUNTIME_DIR=/tmp/runtime-$USER
+export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
+startplasma-x11 &

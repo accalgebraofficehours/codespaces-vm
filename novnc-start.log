@@ -1,0 +1,9 @@
+===== Starting Shared Arch Codespaces VNC =====
+REPO_DIR: /workspaces/codespaces-vm
+VNC_DISPLAY: 1
+VNC_PORT: 5901
+NOVNC_PORT: 6080
+Starting TigerVNC on display :1...
+~/.vnc is deprecated, please consult 'man vncsession' for paths to migrate to. at /usr/sbin/vncserver line 43.
+VNC authentication enabled, but no password file created.
+VNC FAILED — check log
